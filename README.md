@@ -20,5 +20,5 @@ Tratar TOKENS, jwt
 ~~~
 *´¨) 
 ¸.•´¸.•*´¨) ¸.•*¨) 
-(¸.•´ (¸.•` ¤ Erik Navarrete 	
+(¸.•´ (¸.•` ¤ Erik Navarrete ٩(●̮̮̃•̃)۶ 
 ~~~
