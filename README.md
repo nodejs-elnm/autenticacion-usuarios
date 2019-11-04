@@ -7,6 +7,7 @@ Tratar TOKENS, jwt
 ## Temas a tratar
 
 1. Introducción a los tokens
+    + Usando **jsonwebtoken**
 1. JWT
 1. Login personalizado
 1. Protección de rutas vía token

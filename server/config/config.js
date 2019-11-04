@@ -17,5 +17,14 @@ if (process.env.NODE_ENV === 'dev') {
 } else {
     urlDB = process.env.MONGO_URI;
 }
-
 process.env.URLDB = urlDB;
+
+
+// ==========
+//  Caducidad de Token 60s * 60m * 60h * 15d
+process.env.EXPIRATION_TOKEN =  60 * 60 * 24 * 15 ;
+
+// ==========
+//  SEED de autenticación
+process.env.SEED = process.env.SEED || 'este-es-el-seed-de-desarrollo';
+
