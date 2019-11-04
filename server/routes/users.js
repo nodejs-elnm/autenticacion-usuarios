@@ -6,7 +6,13 @@ const User = require('../models/user');
 
 const app = express();
 
-app.get('/user', (req, res) => {
+// Middlewares
+const { verifyToken} = require('../middlewares/autenticacion');
+const { verifyRole } = require('../middlewares/autenticacion');
+
+
+
+app.get('/user', verifyToken ,(req, res) => {
     
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -39,7 +45,7 @@ app.get('/user', (req, res) => {
     
 });
 
-app.post('/user', (req, res) => {
+app.post('/user', [verifyToken, verifyRole], (req, res) => {
 
     let body = req.body;
 
@@ -67,7 +73,7 @@ app.post('/user', (req, res) => {
 
 });
 
-app.put('/user/:id', (req, res) => {
+app.put('/user/:id', [verifyToken, verifyRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'estado'] );
@@ -89,7 +95,7 @@ app.put('/user/:id', (req, res) => {
 
 });
 
-app.delete('/user/:id', (req, res) => {
+app.delete('/user/:id', [verifyToken, verifyRole], (req, res) => {
 
     let id = req.params.id;
 
