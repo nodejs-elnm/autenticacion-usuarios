@@ -5,16 +5,21 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+/// path
+const path = require('path');
+
+
+
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// habilitar folder PUBLIC
+app.use( express.static( path.resolve(__dirname,'../public')) );
 
 // All routes
 app.use( require( './routes/index'));
-
-
 
 //Conexión a BaseDatos
 mongoose.connect(process.env.URLDB, {
