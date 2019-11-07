@@ -14,8 +14,8 @@ const app = express();
 // Acceso por email-pass
 
 app.post('/login', (req, res) => {
-    
-    let body = req.body;   
+
+    let body = req.body;
 
     User.findOne({ email: body.email }, (err, userDB) => {
         if (err) {
@@ -62,7 +62,7 @@ async function verify(token) {
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
     const payload = ticket.getPayload();
-    
+
     return {
         name: payload.name,
         email: payload.email,
@@ -72,80 +72,82 @@ async function verify(token) {
 }
 
 app.post('/google', async (req, res) => {
-    
+
     let token = req.body.idtoken;
 
-    let googleUSer = await verify( token )
+    let googleUSer = await verify(token)
         .catch(err => {
             res.status(403).json({
-                ok:false,
+                ok: false,
                 err
             });
         });
 
-    User.findOne({ email: googleUSer.email }, (err, userDB) => {
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                err
-            });
-        }
+    if (googleUSer) {
 
-        if (userDB) {
-            
-            if (userDB.google === false) {
-                return res.status(400).json({
+        User.findOne({ email: googleUSer.email }, (err, userDB) => {
+            if (err) {
+                return res.status(500).json({
                     ok: false,
-                    err: {
-                        msg: 'Debe utilizar su autenticación normal'
-                    }
-                });
-            } else {
-                let token = jwt.sign({
-                    user: userDB
-                }, process.env.SEED, { expiresIn: process.env.EXPIRATION_TOKEN });
-                
-                res.json({
-                    ok: true,
-                    user: userDB,
-                    token
+                    err
                 });
             }
 
-        } else {
-            // el usuario noexiste en DDBB >> creamos un nuevo usuario
+            if (userDB) {
 
-            let user = new User();
-
-            user.name = googleUSer.name;
-            user.email = googleUSer.email;
-            user.google = true;
-            user.img = googleUSer.img;
-            user.password = bcrypt.hashSync(':)', 10);
-
-            user.save( (err, userDB) => {
-                if (err) {
+                if (userDB.google === false) {
                     return res.status(400).json({
                         ok: false,
-                        err
+                        err: {
+                            msg: 'Debe utilizar su autenticación normal'
+                        }
+                    });
+                } else {
+                    let token = jwt.sign({
+                        user: userDB
+                    }, process.env.SEED, { expiresIn: process.env.EXPIRATION_TOKEN });
+
+                    res.json({
+                        ok: true,
+                        user: userDB,
+                        token
                     });
                 }
 
-                let token = jwt.sign({
-                    user: userDB
-                }, process.env.SEED, { expiresIn: process.env.EXPIRATION_TOKEN });
+            } else {
+                // el usuario noexiste en DDBB >> creamos un nuevo usuario
 
-                res.json({
-                    ok: true,
-                    user: userDB,
-                    token
+                let user = new User();
+
+                user.name = googleUSer.name;
+                user.email = googleUSer.email;
+                user.google = true;
+                user.img = googleUSer.img;
+                user.password = bcrypt.hashSync(':)', 10);
+
+                user.save((err, userDB) => {
+                    if (err) {
+                        return res.status(400).json({
+                            ok: false,
+                            err
+                        });
+                    }
+
+                    let token = jwt.sign({
+                        user: userDB
+                    }, process.env.SEED, { expiresIn: process.env.EXPIRATION_TOKEN });
+
+                    res.json({
+                        ok: true,
+                        user: userDB,
+                        token
+                    });
                 });
-            });
 
-        }
+            }
 
-    });    
-
+        });
+    }
 });
 
 
