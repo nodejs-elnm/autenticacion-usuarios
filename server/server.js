@@ -25,7 +25,8 @@ app.use( require( './routes/index'));
 mongoose.connect(process.env.URLDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true, 
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 }, (err) => {
     if (err) throw err;
     console.log('DDBB ONLINE');
