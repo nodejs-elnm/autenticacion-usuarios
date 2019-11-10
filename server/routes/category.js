@@ -12,6 +12,8 @@ const { verifyRole } = require('../middlewares/autenticacion');
 app.get('/category', verifyToken, (req, res) => {
 
     Category.find({}) //para filtrar una salida, sin el "string datos", sólo se aplica la búsqueda total
+        .sort('name')
+        .populate('createdBy modifiedBy', 'name email')
         .exec((err, categories) => {
             if (err) {
                 return res.status(400).json({
@@ -103,16 +105,17 @@ app.post('/category', verifyToken, (req, res) => {
 app.put('/category/:id', verifyToken, (req, res) => {
 
     let id = req.params.id;
-    let id_user = req.user._id;
-
+    let id_user = req.user._id; 
+    
 
     let data = {
         modifiedBy: id_user,
+        name: req.body.name,
         description: req.body.description
     };
 
-    Category.findByIdAndUpdate(id, data, { new: true, runValidators: true }, (err, categoryDB) => {
-
+    
+    Category.findById(id, (err, categoryDB) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -121,22 +124,39 @@ app.put('/category/:id', verifyToken, (req, res) => {
         }
 
         if (!categoryDB) {
+            return res.status(404).json({
+                ok: false,
+                err: {
+                    message: 'No existe esa categoría'
+                }
+            });
+        }
+
+        if (data.name) {
+            categoryDB.name = data.name;
+        }
+        if (data.description) {
+            categoryDB.description = data.description;
+        }
+
+        categoryDB.modifiedBy = data.modifiedBy;
+
+        categoryDB.save((err, category) => {
+
             if (err) {
-                return res.status(400).json({
+                return res.status(500).json({
                     ok: false,
                     err
                 });
             }
-        }
 
-        res.json({
-            ok: true,
-            category: categoryDB
+            res.json({
+                ok: true,
+                category
+            });
         });
 
-
     });
-
 
 });
 
