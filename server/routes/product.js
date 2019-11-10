@@ -79,6 +79,30 @@ app.get('/products/:id', (req, res) => {
 
 });
 
+
+app.get('/products/search/:termino', verifyToken, (req, res) => {
+    
+    let termino = req.params.termino;
+    let regex = new RegExp(termino, 'i');
+
+    Product.find({ name: regex })
+        .populate('category', 'name description')
+        .exec((err, products) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                products
+            });
+        });
+
+});
+
 app.post('/products', verifyToken, (req, res) => {
 
 
