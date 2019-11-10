@@ -18,11 +18,12 @@ let categorySchema = new Schema({
     },
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'users'    // va el nombre del modelo que se ha exportado
     },
     modifiedBy: {
-        type: String,
-        default: null
+        type: Schema.Types.ObjectId,
+        default: null,
+        ref: 'users'
     }
 
 });
