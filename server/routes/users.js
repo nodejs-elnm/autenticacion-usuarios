@@ -1,6 +1,6 @@
 // Requires
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const _ = require('underscore');
 const User = require('../models/user');
 
@@ -21,7 +21,7 @@ app.get('/user', verifyToken ,(req, res) => {
     limit = Number(limit);
 
 
-    User.find( { estado: true }, "name email google estado" ) //para filtrar una salida, sin el "string datos", sólo se aplica la búsqueda total
+    User.find( { estado: true }, "name email google estado role" ) //para filtrar una salida, sin el "string datos", sólo se aplica la búsqueda total
         .limit(limit)
         .skip(desde)
         .exec( (err, users ) => {
