@@ -13,7 +13,6 @@ const productoSchema = new Schema({
     },
     description: {
         type: String,
-        required: false
     },
     status: {
         type: Boolean, 
@@ -25,7 +24,7 @@ const productoSchema = new Schema({
         ref: 'categories', 
         required: true
     },
-    user: {
+    createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'users'
     }
